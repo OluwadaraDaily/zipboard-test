@@ -1,23 +1,33 @@
 import { useState, useRef } from "react";
+import { useTheme } from "../../context/useTheme";
 
 interface IAccordionProps {
   title: string;
   children: React.ReactNode;
+  lastTile?: boolean;
 }
 
-const Accordion = ({ title, children }: IAccordionProps) => {
+const Accordion = ({ title, children, lastTile = false }: IAccordionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { isDark } = useTheme();
+
+  const getIconPath = () => {
+    if (isOpen) {
+      return isDark ? "/minus_white.svg" : "/minus.svg";
+    }
+    return isDark ? "/plus_white.svg" : "/plus.svg";
+  };
 
   return (
-    <div className="flex flex-col border-t border-app-light-gray">
+    <div className={`flex flex-col border-t border-app-light-gray ${lastTile ? 'border-b' : ''}`}>
       <button 
-        className="flex items-center justify-between p-5 cursor-pointer w-full" 
+        className="flex items-center justify-between md:p-5 p-3 gap-4 cursor-pointer w-full" 
         onClick={() => setIsOpen(!isOpen)}
       >
-        <h1 className="text-3xl font-bold text-black font-dm-sans">{title}</h1>
+        <h2 className="md:text-3xl text-2xl text-left font-bold font-dm-sans">{title}</h2>
         <img 
-          src={isOpen ? "/minus.svg" : "/plus.svg"} 
+          src={getIconPath()} 
           alt="chevron" 
           className={`w-6 h-6 transition-transform duration-5200 ease-in-out`} 
         />
